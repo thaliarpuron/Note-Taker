@@ -18,11 +18,11 @@ app.use(express.static(path.join(__dirname, "public")));
 // HTML Routes
 // =============================================================
 app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, "./public/index.html"));
+    res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 app.get("/notes", function (req, res) {
-    res.sendFile(path.join(__dirname, "./public/notes.html"));
+    res.sendFile(path.join(__dirname, "public/notes.html"));
 });
 
 // API Routes
@@ -34,12 +34,11 @@ app.get("/api/notes", function (req, res) {
 
 app.post("/api/notes", function (req, res) {
     let postNotes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
-    let newNote = req.body.id;
-    let uniqueID = postNotes.length.toString();
-    newNote = uniqueID;
-    postNotes.push(newNote);
-    fs.writeFileSync("db/db.json", JSON.stringify(postNotes));
-    res.json(postNotes);
+    req.body.id = postNotes.length
+    postNotes.push(req.body)
+    postNotes = JSON.stringify(postNotes)
+    fs.writeFileSync("db/db.json", postNotes, "utf8");
+    res.json(JSON.parse(postNotes));
 });
 
 app.delete("/api/notes/:id", function (req, res) {
